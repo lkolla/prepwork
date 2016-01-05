@@ -3,22 +3,12 @@ let request = require('request')
 let path = require('path')
 let fs = require('fs')
 let argv = require('yargs')
-    .default('host', '127.0.0.1')
-    .argv
 
+let host = argv.host || 'localhost'
 let logPath = argv.log && path.join(__dirname, argv.log)
-
-console.log(logPath)
-
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
-
-let scheme = 'http://'
-
-// Build the destinationUrl using the --host value
-let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
-
-// Update our destinationUrl line from above to include the port
-let destinationUrl = argv.url || scheme + argv.host + ':' + port
+let port = argv.port || '8000'
+let destinationUrl = 'http://' + argv.host + ':' + port
 
 
 http.createServer((req, res) => {
@@ -31,35 +21,30 @@ http.createServer((req, res) => {
 	logStream.write('Request headers: ' + JSON.stringify(req.headers))
 	req.pipe(logStream, {end: false})
     req.pipe(res)
-    //res.end('hello world \n')
+    
 }).listen(8000)
 
 
 http.createServer((req, res) => {
-  console.log(`Proxying request to: ${destinationUrl + req.url}`)
-    
-    console.log('requested url...' + req.headers['x-destination-url'])
+
+    console.log('proxing url...' + req.headers['x-destination-url'])
 
     let url = destinationUrl;
     if(req.headers['x-destination-url']){
-    	url = req.headers['x-destination-url'];
+    	url = req.headers['x-destination-url']
     }
-    
 
     let options = {
         headers: req.headers,
-        url: url + req.url
+        url: url,
+        method:req.method
     }
-
-    options.method = req.method
 
     let downstreamResponse = req.pipe(request(options))
 
 	//process.stdout.write()
 	logStream.write('Request headers: ' + JSON.stringify(downstreamResponse.headers))
 
-	downstreamResponse.pipe(logStream, {end: false})
 	downstreamResponse.pipe(res)
-
-	//req.pipe(request(options)).pipe(res)
+    
 }).listen(8001)
