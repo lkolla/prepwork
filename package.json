@@ -1,0 +1,25 @@
+{
+  "name": "prepwork",
+  "version": "1.0.0",
+  "description": "prep work for node js training.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node -- --stage 1 --optional strict -- index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lkolla/prepwork.git"
+  },
+  "author": "Rajesh Kolla",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lkolla/prepwork/issues"
+  },
+  "homepage": "https://github.com/lkolla/prepwork#readme",
+  "dependencies": {
+    "fs": "0.0.2",
+    "path": "^0.12.7",
+    "yargs": "^3.31.0"
+  }
+}
